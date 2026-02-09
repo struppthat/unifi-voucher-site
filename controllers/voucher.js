@@ -72,6 +72,20 @@ module.exports = {
                 }
             }
 
+            // Add this validation after the type check and before the note format check:
+
+				if(!req.body['voucher-note'] || req.body['voucher-note'].trim() === '') {
+				    res.cookie('flashMessage', JSON.stringify({type: 'error', message: 'Note is required!'}), {httpOnly: true, expires: new Date(Date.now() + 24 * 60 * 60 * 1000)}).redirect(302, `${req.headers['x-ingress-path'] ? req.headers['x-ingress-path'] : ''}/vouchers`);
+				    return;
+				}
+
+				if(req.body['voucher-note'] !== '' && req.body['voucher-note'].includes('||;;||')) {
+				    res.cookie('flashMessage', JSON.stringify({type: 'error', message: 'Invalid Notes!'}), {httpOnly: true, expires: new Date(Date.now() + 24 * 60 * 60 * 1000)}).redirect(302, `${req.headers['x-ingress-path'] ? req.headers['x-ingress-path'] : ''}/vouchers`);
+				    return;
+				}
+
+			// end of custom add
+			
             if(req.body['voucher-note'] !== '' && req.body['voucher-note'].includes('||;;||')) {
                 res.cookie('flashMessage', JSON.stringify({type: 'error', message: 'Invalid Notes!'}), {httpOnly: true, expires: new Date(Date.now() + 24 * 60 * 60 * 1000)}).redirect(302, `${req.headers['x-ingress-path'] ? req.headers['x-ingress-path'] : ''}/vouchers`);
                 return;
